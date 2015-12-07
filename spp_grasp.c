@@ -38,7 +38,8 @@ double cout(int* sol, data* dat)
 	double val = 0;
 	for (i = 0; i < dat->nbvar; ++i)
 	{
-		val += (sol[i]) ? dat->coef[i] : 0;  
+		val += sol[i] *(double) dat->coef[i];
+		
 	}
 	return val;
 }
@@ -54,6 +55,7 @@ double localSearch(data* dat, int * sol)
 		
 	while(!fin)
 	{
+
 		for(i = 0; i < dat->nbvar; ++i)
 		{
 
@@ -124,6 +126,7 @@ int readfile(data* dat, char* datafile)
 	dat->nbctr = val;
 	fscanf(fin, "%d", &val);
 	dat->nbvar = val;
+
 	
 	dat->coef = (int *) malloc (dat->nbvar * sizeof(int));
 	for (i = 0; i < dat->nbvar; ++i)
@@ -132,6 +135,7 @@ int readfile(data* dat, char* datafile)
 		dat->coef[i] = val;
 	}
 
+	
 	dat->matrix = (int **) malloc (dat->nbctr * sizeof(int*));
 	for (i = 0; i <= dat->nbctr; ++i)
 	{
@@ -264,24 +268,51 @@ int main (int argc, char** argv)
 		}
 
 		printf("OK!\n");
-		printf("Construction d'une solution initiale ...\n");
+
+		/* double valmoy = 0; */
+	   	double valmin = 9999999;
+		double valmax =0;
 
 		for (l = 1; l < 9; ++l) {
-			for (k = 1; k <= nbIter; ++k)
+
+			double valmin = 9999999;
+			double valmax =0;
+			for (k = 0; k < nbIter; ++k)
 			{
-				while (!allDisabled(actCtr, &dat))
+				
+
+				//printf("Construction d'une solution initiale ...\n");
+
+				for (i = 0; i < dat.nbctr; ++i)
 				{
-					printf("Calcul des utilitées ...\n");
+					actCtr[i] = 1;
+				}
+
+				for (j = 0; j < dat.nbvar; ++j)
+				{
+					fixVar[j] = 0;
+				}
+				for (j = 0; j < dat.nbvar; ++j)
+				{
+					sol[j] = 0;
+				}
+				
+				
+				double Umax=-1;
+				while (!allDisabled(actCtr, &dat) && Umax!=0.00)
+				{
+				    
+					//printf("Calcul des utilitées ...\n");
 					setUtility(utility, &dat, fixVar, actCtr);
-					printf("Utilitées : ");
+					//printf("Utilitées : ");
 					/* for (j = 0; j < dat.nbvar; j++) */
 					/* { */
 					/* 	printf("%f ", utility[j]); */
 					/* } */
-					printf(" ... OK!\n");
+					//printf(" ... OK!\n");
 
 			
-					printf("Calcul de Umax ...\n");
+					//printf("Calcul de Umax ...\n");
 					Umax = -1;
 					for (j = 0; j < dat.nbvar; ++j)
 					{
@@ -290,53 +321,76 @@ int main (int argc, char** argv)
 							Umax  = utility[j];
 						}
 					}
-					printf("OK : Umax = %f!\n", Umax);
+					//printf("OK : Umax = %f!\n", Umax);
 					assert (Umax != -1); 
-
-					printf("Determination des candidats en fonction de Umax et de alpha ...\n");
-					bound = Umax * alpha[l];
-					aux = (int *) malloc (dat.nbvar*sizeof(int)); 
-					cpt = 0;
-					for (j = 0; j < dat.nbvar; ++j)
+					if(Umax != 0.0)
 					{
-						if(utility[j] >= bound)
+						//printf("Determination des candidats en fonction de Umax et de alpha ...\n");
+						bound = Umax * alpha[l];
+						aux = (int *) malloc (dat.nbvar*sizeof(int)); 
+						cpt = 0;
+						for (j = 0; j < dat.nbvar; ++j)
 						{
-							aux[cpt] = j;
-							++cpt;
-						}
-					}
-					printf("OK : Seuil  = %f pour un Umax de %f\n", bound, Umax);
-
-					srand((unsigned int) time(0));
-					choice  = rand() % cpt;
-					printf("Choix aléatoire de la valeur fixé : %d d'utilité %f\n", aux[choice], utility[aux[choice]]);
-
-					sol[aux[choice]] = 1;
-					fixVar[aux[choice]] = 1;
-
-					for (i = 0; i < dat.nbctr; ++i)
-					{
-						if (dat.matrix[i][aux[choice]] == 1)
-						{
-							actCtr[i] = 0;
-							for (j = 0; j < dat.nbvar; ++j)
+							if(utility[j] >= bound)
 							{
-								if(dat.matrix[i][j] == 1)
+								aux[cpt] = j;
+								++cpt;
+							}
+
+						}
+						//	printf("OK : Seuil  = %f pour un Umax de %f\n", bound, Umax);
+
+						srand((unsigned int) time(0));
+						choice  = (rand() % cpt) ;
+						//printf("Choix aléatoire de la valeur fixé : %d d'utilité %f           et de val   %d \n", aux[choice], utility[aux[choice]],dat.coef[aux[choice]]);
+						sol[aux[choice]] = 1;
+					
+						fixVar[aux[choice]] = 1;
+
+						for (i = 0; i < dat.nbctr; ++i)
+						{
+							if (dat.matrix[i][aux[choice]] == 1)
+							{
+								actCtr[i] = 0;
+								for (j = 0; j < dat.nbvar; ++j)
 								{
-									fixVar[j] = 1;
+									if(dat.matrix[i][j] == 1)
+									{
+										fixVar[j] = 1;
+									}
 								}
 							}
 						}
+
 					}
+					//printf("Cout : %f\n", cout(sol, &dat));
 					//exit(0);
 				}
-				printf("Solution initiale : OK!\n");
-				display(sol, dat.nbvar);
-			   
+				//printf("Solution initiale : OK!\n");
+				//display(sol, dat.nbvar);
+				// printf("Cout : %f\n", cout(sol, &dat));
 				localSearch(&dat, sol);
-				display(sol, dat.nbvar);
-				printf("Cout : %f\n", cout(sol, &dat));
+				//	display(sol, dat.nbvar);
+				double res  =cout(sol, &dat);
+				//	printf("Cout : %f\n", res );
+				if(res > valmax)
+				{
+					valmax = res;
+				}
+				if(res < valmin)
+				{
+					valmin = res;
+				}
+				/* if (k == 0) { */
+				/* 	valmoy = res; */
+				/* } */
+				/* else	{ */
+				/* 	valmoy = (valmoy*(k) + res)/k+1; */
+				/* } */
 			}
+			//printf("val min  : %f!\n",valmin);
+			printf("val max  : %f!\n",valmax);
+			//	printf("val moy  : %f!\n",valmoy);
 		}
 		
 	}
