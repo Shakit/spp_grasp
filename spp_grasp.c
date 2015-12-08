@@ -44,7 +44,7 @@ double cout(int* sol, data* dat)
 	return val;
 }
 
-double localSearch(data* dat, int * sol)
+double localSearch(data* dat, int * sol,int* actCtr)
 {
 	int i,j,k;
 	int present[dat->nbvar];
@@ -371,7 +371,7 @@ int main (int argc, char** argv)
 				//printf("Solution initiale : OK!\n");
 				//display(sol, dat.nbvar);
 				// printf("Cout : %f\n", cout(sol, &dat));
-				localSearch(&dat, sol);
+				localSearch(&dat, &sol,&actCtr);
 				//	display(sol, dat.nbvar);
 				double res  =cout(sol, &dat);
 				//	printf("Cout : %f\n", res );
