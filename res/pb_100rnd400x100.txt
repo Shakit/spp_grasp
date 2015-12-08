@@ -1,0 +1,50 @@
+Vérification du nombre d'argument ... 
+argv[0] : bin/spp_grasp
+argv[1] : data/pb_100rnd0400.dat
+argv[2] : 100
+OK!
+Lecture du fichier de données... 
+OK!
+Allocation mémoire...
+OK!
+Alpha = 0.250000
+val min  : 12.000000!
+val max  : 12.000000!
+val moy  : 12.000000!
+-------------------------
+Alpha = 0.500000
+val min  : 12.000000!
+val max  : 15.000000!
+val moy  : 12.730000!
+-------------------------
+Alpha = 0.700000
+val min  : 14.000000!
+val max  : 14.000000!
+val moy  : 14.000000!
+-------------------------
+Alpha = 0.800000
+val min  : 12.000000!
+val max  : 13.000000!
+val moy  : 12.210000!
+-------------------------
+Alpha = 0.850000
+val min  : 14.000000!
+val max  : 14.000000!
+val moy  : 14.000000!
+-------------------------
+Alpha = 0.900000
+val min  : 13.000000!
+val max  : 14.000000!
+val moy  : 13.060000!
+-------------------------
+Alpha = 0.950000
+val min  : 13.000000!
+val max  : 14.000000!
+val moy  : 13.900000!
+-------------------------
+Alpha = 1.000000
+val min  : 13.000000!
+val max  : 13.000000!
+val moy  : 13.000000!
+-------------------------
+Temps de résolution : 4.203000
