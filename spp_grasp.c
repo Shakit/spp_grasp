@@ -371,6 +371,29 @@ int main (int argc, char** argv)
 				//printf("Solution initiale : OK!\n");
 				//display(sol, dat.nbvar);
 				// printf("Cout : %f\n", cout(sol, &dat));
+				
+				for (i=0;i<dat.nbctr;i++)
+				{
+					cpt = 0;
+					for (j=0;j<dat.nbvar;j++)
+					{
+						if(sol[j] == 1 && dat.matrix[i][j] == 1)
+						{
+							cpt++;	
+						
+						}
+					
+					}
+					if(cpt>=2)
+					{
+						printf("----------------------ERROR---------------------");
+					}
+					
+				}
+				
+				
+				
+				
 				localSearch(&dat, &sol,&actCtr);
 				//	display(sol, dat.nbvar);
 				double res  =cout(sol, &dat);
