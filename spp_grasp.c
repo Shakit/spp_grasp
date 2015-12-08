@@ -107,6 +107,7 @@ double localSearch(data* dat, int * sol)
 			}
 		}
 	}
+	for (i = 0; i < dat->nbvar; i++) sol[i] = currentSol[i];
 }
 
 
