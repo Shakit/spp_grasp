@@ -51,6 +51,7 @@ double localSearch(data* dat, int * sol)
 	double currentCost = cout(sol, dat);
 	int fin = 0;
 	int currentSol[dat->nbvar];
+	int solProp[dat->nbvar];
 	for (i = 0; i < dat->nbvar; i++) currentSol[i] = sol[i];
 		
 	while(!fin)
@@ -61,7 +62,7 @@ double localSearch(data* dat, int * sol)
 
 			if(sol[i])
 			{
-				for(j = 0; j <dat->nbvar;++j)
+				for(j = 0; j < dat->nbvar;++j)
 				{
 					present[j] = 1;
 				}
@@ -70,11 +71,13 @@ double localSearch(data* dat, int * sol)
 				{
 					for(k=0;k<dat->nbvar;++k)
 					{
-						if(dat->matrix[j][k] != dat->matrix[j][i])
+						if(actCtr[j] == 0)
 						{
-							present[k] = 0;
-						}
-							
+							if(dat->matrix[j][k] != dat->matrix[j][i])
+							{
+								present[k] = 0;
+							}
+						}	
 					}
 				}
 
@@ -86,22 +89,17 @@ double localSearch(data* dat, int * sol)
 					
 					if(present[k] && k!=currentOne)
 					{
-						currentSol[k] = 1;
-						currentSol[currentOne] = 0;
+						for (i = 0; i < dat->nbvar; i++) SolProp[i] = currentSol[i];
+						solProp[k] = 1;
+						solProp[currentOne] = 0;
 						
 
-						double c = cout(currentSol,dat);
+						double c = cout(solProp,dat);
 						if (c > currentCost)
 						{
 							currentCost = c;
-							for (i = 0; i < dat->nbvar; i++) sol[i] = currentSol[i];
-							currentOne  = k;
+							for (i = 0; i < dat->nbvar; i++) currentSol[i] = solProp[i];
 							fin=0;
-						}
-						else
-						{
-							currentSol[k] = 0;
-							currentSol[currentOne] = 1;
 						}
 						// display(currentSol, dat->nbvar);
 					}
@@ -343,25 +341,28 @@ int main (int argc, char** argv)
 						srand((unsigned int) time(0));
 						choice  = (rand() % cpt) ;
 						//printf("Choix aléatoire de la valeur fixé : %d d'utilité %f           et de val   %d \n", aux[choice], utility[aux[choice]],dat.coef[aux[choice]]);
-						sol[aux[choice]] = 1;
-					
-						fixVar[aux[choice]] = 1;
-
-						for (i = 0; i < dat.nbctr; ++i)
+						
+						if(fixVar[aux[choice]] == 0)
 						{
-							if (dat.matrix[i][aux[choice]] == 1)
+							sol[aux[choice]] = 1;
+						
+							fixVar[aux[choice]] = 1;
+	
+							for (i = 0; i < dat.nbctr; ++i)
 							{
-								actCtr[i] = 0;
-								for (j = 0; j < dat.nbvar; ++j)
+								if (dat.matrix[i][aux[choice]] == 1)
 								{
-									if(dat.matrix[i][j] == 1)
+									actCtr[i] = 0;
+									for (j = 0; j < dat.nbvar; ++j)
 									{
-										fixVar[j] = 1;
+										if(dat.matrix[i][j] == 1)
+										{
+											fixVar[j] = 1;
+										}
 									}
 								}
 							}
 						}
-
 					}
 					//printf("Cout : %f\n", cout(sol, &dat));
 					//exit(0);
