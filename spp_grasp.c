@@ -89,7 +89,7 @@ double localSearch(data* dat, int * sol,int* actCtr)
 					
 					if(present[k] && k!=currentOne)
 					{
-						for (i = 0; i < dat->nbvar; i++) SolProp[i] = currentSol[i];
+						for (i = 0; i < dat->nbvar; i++) solProp[i] = currentSol[i];
 						solProp[k] = 1;
 						solProp[currentOne] = 0;
 						
